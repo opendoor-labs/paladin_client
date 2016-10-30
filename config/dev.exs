@@ -6,7 +6,6 @@ config :guardian, Guardian,
   secret_key: "dev"
 
 config :paladin_client, PaladinClient,
-  anon_user: fn -> "anon_me" end,
   adapter: PaladinClient.HttpClient,
   url: "http://localhost:4000",
   apps: [

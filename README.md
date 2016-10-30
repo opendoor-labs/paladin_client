@@ -2,7 +2,7 @@
 
 This client provides helper functions and a Read-Through cache for interacting with [Paladin](https://github.com/opendoor-labs/paladin)
 
-Paladin provides detailed ACL for services to communicate with one-another either using an anonymous user or on behalf of an existing user.
+Paladin provides detailed ACL for services to communicate with one-another either using an service assertion or on behalf of an existing user.
 
 ## Installation
 
@@ -12,7 +12,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
     ```elixir
     def deps do
-      [{:paladin_client, "~> 0.1.0"}]
+      [{:paladin_client, "~> 0.2.0"}]
     end
     ```
 
@@ -38,7 +38,6 @@ config :guardian, Guardian,
       
 When you add PaladinClient to your application you'll need to add some configuration
 
-* `anon_user` The value of what is considered an anonymous user. A good value is `"anon". This can be a literal or func.
 * `adapter` Use `PaladinClient.HttpClient` for a live client. Use `PaladinClient.InMemory` for testing.
 * `url` The url of the paladin install. E.g. `https://my-paladin-install.my-site.com`
 * `apps` A Keyword list where the keys are the name/reference of apps you talk to, and the value is their Paladin ID.
@@ -55,10 +54,10 @@ You can use PaladinClient in a number of different ways.
 Meaning that our service wants to communicate with another service.
 It's no on behalf of a particular user.
 
-When we do this we use the idea of an anonymous subject. It can be `"anon"`. Provided the receiving server can deal with it.
+When we do this we use the the service id as the subject. Provided the receiving server can deal with it.
 
 ```elixir
-case PaladinClient.anon_token(:some_app) do
+case PaladinClient.service_token(:some_app) do
   {:ok, jwt} ->
     do_your_thing(jwt)
   {:error, reason} -> {:oh_no}

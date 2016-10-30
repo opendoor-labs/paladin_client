@@ -18,8 +18,6 @@ defmodule PaladinClient do
   @type expiry :: non_neg_integer
   @type reason :: atom | String.t
 
-  @default_anon_user "anon"
-
   alias PaladinClient.TokenCache
 
   @callback access_token(assertion_token) :: {:ok, jwt, expiry} |
@@ -47,16 +45,16 @@ defmodule PaladinClient do
     end)
   end
 
-  @spec anon_token(jwt, Map.t) :: {:ok, token} :: {:error, term}
+  @spec service_token(app_id, Map.t) :: {:ok, token} :: {:error, term}
   @doc """
   When there is no existing token.
   This is useful for when there is no user you are acting on behalf of.
   Primarily system to system
   """
-  def anon_token(app_id, claims \\ %{}) do
-    user = anon_user
+  def service_token(app_id, claims \\ %{}) do
     id = fetch_app_id(app_id)
-    TokenCache.find({user, id}, fn ->
+    TokenCache.find({Guardian.issuer, id}, fn ->
+      user = "Service:#{Guardian.issuer}"
       case new_assertion_token(app_id, user, claims) do
         {:ok, token} ->
           access_token!(token, user, id)
@@ -115,12 +113,6 @@ defmodule PaladinClient do
   """
   def endpoint, do: Application.get_env(:paladin_client, PaladinClient)[:url]
 
-  @doc """
-  Fetches the resource to use as an anonymous user when communicating system to system.
-  Usually this would be "anon"
-  """
-  def anon_user, do: fetch_anon_user
-
   defp access_token!(the_token, original_token, app_id) do
     adapter = Application.get_env(:paladin_client, __MODULE__)[:adapter]
     case adapter.access_token(the_token) do
@@ -130,14 +122,4 @@ defmodule PaladinClient do
       error -> error
     end
   end
-
-  defp fetch_anon_user do
-    config = Application.get_env(:paladin_client, __MODULE__)
-    fetch_anon_user(config && config[:anon_user])
-  end
-
-  defp fetch_anon_user(nil), do: @default_anon_user
-  defp fetch_anon_user(false), do: @default_anon_user
-  defp fetch_anon_user(f) when is_function(f), do: f.()
-  defp fetch_anon_user(other), do: other
 end
