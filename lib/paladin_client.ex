@@ -49,8 +49,8 @@ defmodule PaladinClient do
   """
   def service_token(app_id, claims \\ %{}) do
     id = fetch_app_id(app_id)
-    TokenCache.find({Guardian.issuer, id}, fn ->
-      user = "Service:#{Guardian.issuer}"
+    user = "Service:#{Guardian.issuer}"
+    TokenCache.find({user, id}, fn ->
       case new_assertion_token(app_id, user, claims) do
         {:ok, token} ->
           access_token!(token, user, id)
