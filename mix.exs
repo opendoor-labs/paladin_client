@@ -1,7 +1,7 @@
 defmodule PaladinClient.Mixfile do
   use Mix.Project
 
-  @version "0.2.0"
+  @version "0.2.1"
   @maintainers ["Daniel Neighman"]
   @homepage_url "https://github.com/opendoor-labs/paladin_client"
   @source_url "https://github.com/opendoor-labs/paladin_client"

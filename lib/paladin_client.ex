@@ -33,15 +33,11 @@ defmodule PaladinClient do
   def from_existing_token(token, app_id, opts \\ %{}) do
     id = fetch_app_id(app_id)
     TokenCache.find({token, id}, fn ->
-      case Guardian.decode_and_verify(token) do
-        {:ok, claims} ->
-          {:ok, user} = Guardian.serializer.from_token(claims["sub"])
-          claims = Map.merge(claims, opts)
-          {:ok, the_token} = new_assertion_token(id, user, claims)
-          access_token!(the_token, token, id)
-
-        error -> error
-      end
+      claims = Guardian.peek_claims(token)
+      claims = Map.merge(claims, opts)
+      sub = claims["sub"]
+      {:ok, the_token} = new_assertion_token(id, sub, claims)
+      access_token!(the_token, token, id)
     end)
   end
 
