@@ -29,6 +29,7 @@ defmodule PaladinClient.Mixfile do
   def application do
     [applications: applications(Mix.env),
      mod: {PaladinClient, []},
+     env: [token_adapter: PaladinClient.Token.Guardian04]
     ]
   end
 
@@ -50,7 +51,7 @@ defmodule PaladinClient.Mixfile do
 
   defp deps do
     [ {:bypass, "~> 0.5", only: [:test]},
-      {:guardian, "~> 0.13"},
+      {:guardian, "~> 0.13 or ~> 0.14 or ~> 1.0"},
       {:httpoison, "~> 0.9"},
       {:poison, "~> 2.0"},
       {:phoenix, "~> 1.2", only: [:dev, :test]},

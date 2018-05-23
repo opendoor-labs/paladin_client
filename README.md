@@ -26,7 +26,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
 ## Configuration
 
-Visit your Paladin instance and register your application. 
+Visit your Paladin instance and register your application.
 You'll need it's ID to use as your Guardian issuer and set your Guardian secret key to the secret Paladin gives you.
 
 ```elixir
@@ -35,16 +35,28 @@ config :guardian, Guardian,
   secret_key: "secret_from_paladin"
   ...
 ```
-      
+
 When you add PaladinClient to your application you'll need to add some configuration
 
 * `adapter` Use `PaladinClient.HttpClient` for a live client. Use `PaladinClient.InMemory` for testing.
 * `url` The url of the paladin install. E.g. `https://my-paladin-install.my-site.com`
 * `apps` A Keyword list where the keys are the name/reference of apps you talk to, and the value is their Paladin ID.
 
+### Guardian 1.0.x
+
+PaladinClient was originally created with Guardian 0.4.x but you can still use Guardian 1.x. Configure your Guardian implementation as usual. You'll need to add a small amount of configuration to point paladin client at your implementation module.
+
+```elixir
+config :paladin_client,
+  token_adapter: PaladinClient.Token.Guardian10
+
+config :paladin_client, PaladinClient.Token,
+  guardian_module: MyGuardianModule
+```
+
 ## Usage
 
-You can use PaladinClient in a number of different ways. 
+You can use PaladinClient in a number of different ways.
 
 1. As a plain service talking to another service. No user involved.
 2. Speaking to another service on behalf of a user. e.g. Receive a request from user X, request to service A as user X
@@ -66,7 +78,7 @@ end
 
 ### Inside the context of a user
 
-When you are acting on behalf of a user, you can use either an existing JWT that Guardian can verify using your secret, 
+When you are acting on behalf of a user, you can use either an existing JWT that Guardian can verify using your secret,
 or you can have PaladinClient generate a new one for the user.
 
 Note that the way you encode the user into the token must be understood by the receiving application

@@ -5,6 +5,8 @@ defmodule PaladinClient do
   """
   use Application
 
+  alias PaladinClient.Token
+
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
     children = [worker(PaladinClient.TokenCache, [])]
@@ -33,7 +35,7 @@ defmodule PaladinClient do
   def from_existing_token(token, app_id, opts \\ %{}) do
     id = fetch_app_id(app_id)
     TokenCache.find({token, id}, fn ->
-      claims = Guardian.peek_claims(token)
+      claims = Token.adapter.peek_claims(token)
       claims = Map.merge(claims, opts)
       sub = claims["sub"]
       {:ok, the_token} = new_assertion_token(id, sub, claims)
@@ -49,7 +51,7 @@ defmodule PaladinClient do
   """
   def service_token(app_id, claims \\ %{}) do
     id = fetch_app_id(app_id)
-    user = "Service:#{Guardian.issuer}"
+    user = "Service:#{Token.adapter.paladin_app_id}"
     TokenCache.find({user, id}, fn ->
       case new_assertion_token(app_id, user, claims) do
         {:ok, token} ->
@@ -66,13 +68,12 @@ defmodule PaladinClient do
   """
   def new_assertion_token(app_id, user, claims \\ %{}) do
     id = fetch_app_id(app_id)
-    {:ok, sub} = Guardian.serializer.for_token(user)
+    {:ok, sub} = Token.adapter.sub_from_resource(user)
     claims = claims
     |> Map.drop(["iat", "exp"])
     |> Map.put("aud", id)
-    |> Map.put_new(:ttl, {1, :minute})
 
-    result = Guardian.encode_and_sign(sub, :assertion, claims)
+    result = Token.adapter.encode_and_sign(sub, :assertion, claims, {1, :minute})
 
     case result do
       {:ok, jwt, _full_claims} -> {:ok, jwt}
@@ -102,7 +103,7 @@ defmodule PaladinClient do
   @doc """
   When using Paladin, your issuer should be your application ID.
   """
-  def client_id, do: Application.get_env(:guardian, Guardian)[:issuer]
+  def client_id, do: Token.adapter.paladin_app_id
 
   @doc """
   Fetch the url of Paladin in this environment

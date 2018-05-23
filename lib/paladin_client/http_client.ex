@@ -35,7 +35,8 @@ defmodule PaladinClient.HTTPClient do
         Logger.warn("Could not obtain access token\n#{inspect(response)}")
         {:error, reason}
 
-      _ ->
+      err ->
+        IO.inspect(err)
         {:error, :unknown_error}
     end
   end
