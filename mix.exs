@@ -49,11 +49,12 @@ defmodule PaladinClient.Mixfile do
   defp elixirc_paths(_),     do: ["lib"]
 
   defp deps do
-    [ {:bypass, "~> 0.5", only: [:test]},
-      {:guardian, "~> 0.13"},
+    [ {:bypass, "~> 1.0", only: [:test]},
+      {:guardian, "~> 0.14"},
       {:httpoison, "~> 1.5"},
-      {:poison, "~> 2.0"},
-      {:phoenix, "~> 1.2", only: [:dev, :test]},
+      {:poison, "~> 4.0.1"},
+      {:phoenix, "~> 1.4", only: [:dev, :test]},
+      {:plug_cowboy, "~> 2.0", only: [:dev, :test]},
       {:ex_doc, "~> 0.12", only: :dev},
     ]
   end
