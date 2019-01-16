@@ -41,22 +41,22 @@ defmodule PaladinClient.HTTPClient do
     end
   end
 
-  defp process_url(path), do: PaladinClient.endpoint <> path
+  def process_url(path), do: PaladinClient.endpoint <> path
 
-  defp process_request_body(body) when is_map(body), do: Poison.encode!(body)
-  defp process_request_body(body), do: body
+  def process_request_body(body) when is_map(body), do: Poison.encode!(body)
+  def process_request_body(body), do: body
 
-  defp process_request_headers(nil), do: @headers
-  defp process_request_headers(headers), do: headers ++ @headers
+  def process_request_headers(nil), do: @headers
+  def process_request_headers(headers), do: headers ++ @headers
 
-  defp process_response_body(nil), do: nil
-  defp process_response_body(body), do: Poison.decode!(body)
+  def process_response_body(nil), do: nil
+  def process_response_body(body), do: Poison.decode!(body)
 
-  defp expiry_from_headers([{"X-Expiry", val} | _]) do
+  def expiry_from_headers([{"X-Expiry", val} | _]) do
     {int, _} = Integer.parse(val)
     int
   end
 
-  defp expiry_from_headers([_ | rest]), do: expiry_from_headers(rest)
-  defp expiry_from_headers([]), do: nil
+  def expiry_from_headers([_ | rest]), do: expiry_from_headers(rest)
+  def expiry_from_headers([]), do: nil
 end
