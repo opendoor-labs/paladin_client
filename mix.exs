@@ -52,7 +52,7 @@ defmodule PaladinClient.Mixfile do
   defp deps do
     [ {:bypass, "~> 1.0", only: [:test]},
       {:guardian, "~> 0.13 or ~> 0.14 or ~> 1.0"},
-      {:httpoison, "~> 0.9"},
+      {:httpoison, ">= 1.5.0"},
       {:poison, "~> 2.0"},
       {:phoenix, "~> 1.4", only: [:dev, :test]},
       {:plug_cowboy, "~> 2.0", only: [:dev, :test]},
