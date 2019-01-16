@@ -11,15 +11,15 @@ defmodule PaladinClient.Mixfile do
     [app: :paladin_client,
      version: @version,
      name: @name,
-     package: package,
+     package: package(),
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      elixirc_paths: elixirc_paths(Mix.env),
      source_url: @source_url,
      homepage_url: @homepage_url,
-     description: description,
-     docs: docs,
+     description: description(),
+     docs: docs(),
      deps: deps()]
   end
 
@@ -34,14 +34,14 @@ defmodule PaladinClient.Mixfile do
   end
 
   defp applications(:test) do
-    applications ++ [:bypass, :phoenix]
+    applications() ++ [:bypass, :phoenix]
   end
 
   defp applications(:dev) do
-    applications ++ [:phoenix]
+    applications() ++ [:phoenix]
   end
 
-  defp applications(_), do: applications
+  defp applications(_), do: applications()
   defp applications() do
     [:logger, :httpoison, :guardian]
   end
@@ -50,11 +50,12 @@ defmodule PaladinClient.Mixfile do
   defp elixirc_paths(_),     do: ["lib"]
 
   defp deps do
-    [ {:bypass, "~> 0.5", only: [:test]},
+    [ {:bypass, "~> 1.0", only: [:test]},
       {:guardian, "~> 0.13 or ~> 0.14 or ~> 1.0"},
       {:httpoison, "~> 0.9"},
       {:poison, "~> 2.0"},
-      {:phoenix, "~> 1.2", only: [:dev, :test]},
+      {:phoenix, "~> 1.4", only: [:dev, :test]},
+      {:plug_cowboy, "~> 2.0", only: [:dev, :test]},
       {:ex_doc, "~> 0.12", only: :dev},
     ]
   end

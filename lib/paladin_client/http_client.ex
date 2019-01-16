@@ -36,7 +36,7 @@ defmodule PaladinClient.HTTPClient do
         {:error, reason}
 
       err ->
-        IO.inspect(err)
+        Logger.error(inspect(err))
         {:error, :unknown_error}
     end
   end

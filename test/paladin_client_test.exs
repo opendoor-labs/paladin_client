@@ -5,7 +5,7 @@ defmodule PaladinClientTest do
   alias PaladinClient, as: Client
 
   setup do
-    {:ok, jwt, _full_claims} = Guardian.encode_and_sign("the_user")
+    {:ok, jwt, _full_claims} = Client.Token.adapter.encode_and_sign("the_user", :access, %{}, {1, :hour})
     {:ok, %{jwt: jwt}}
   end
 

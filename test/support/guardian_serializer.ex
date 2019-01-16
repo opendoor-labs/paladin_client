@@ -1,4 +1,6 @@
-defmodule PaladinClient.Test.GuardianSerializer do
-  def from_token(thing), do: {:ok, thing}
-  def for_token(thing), do: {:ok, thing}
+defmodule PaladinClient.Test.Guardian do
+  use Guardian, otp_app: :paladin_client
+
+  def subject_for_token(thing, _claims), do: {:ok, thing}
+  def resource_from_claims(%{"sub" => thing}), do: {:ok, thing}
 end
